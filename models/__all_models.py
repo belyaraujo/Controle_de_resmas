@@ -1,0 +1,2 @@
+from models.setores_model import Setores
+from models.solicitacoes_model import Solicitacoes
