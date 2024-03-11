@@ -1,0 +1,39 @@
+{%include 'layouts/navigation.html'%}
+<br><br><br>
+<div class="container">
+    <div class="card">
+        <h5 class="card-header text-white" style="background-color: rgb(29, 29, 71);">Histórico de resmas
+          <a class="btn btn-primary" href="{{url_for('historico-impressoes')}}" role="button">Impressões</a>
+        </h5>
+        <div class="card-body">
+            <br>
+            <table class="table">
+                <thead class="table-dark text-white" >
+                    <tr>
+                        <th scope="col" style="text-align: center;">Setor</th>
+                        <th scope="col" style="text-align: center;">Nome</th>
+                        <th scope="col" style="text-align: center;">Matrícula</th>
+                        <th scope="col" style="text-align: center;">Quantidade de resmas</th>
+                        <th scope="col" style="text-align: center;">Usuário</th>
+                        <th scope="col" style="text-align: center;">#</th>
+                      </tr>
+                </thead>
+                <tbody>
+                  {% for solic in solicitacoes %}
+                    <tr>
+                        <td style="text-align: center;">{{ solic.nome_setor }}</td>
+                        <td style="text-align: center;">{{ solic.nome }}</td>
+                        <td style="text-align: center;">{{ solic.matricula }}</td>
+                        <td style="text-align: center;">{{ solic.quantidade_resmas }}</td>
+                        <td style="text-align: center;">Usuário</td>
+                        <td style="text-align: center;">
+                          <button type="button" class="btn btn-outline-warning">editar</button>
+                          <button type="button" class="btn btn-outline-danger">apagar</button>
+                        </td>
+                      </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+        </div>
+      </div>
+</div>

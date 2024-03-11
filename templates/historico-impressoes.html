@@ -1,0 +1,39 @@
+{%include 'layouts/navigation.html'%}
+<br><br><br>
+<div class="container">
+    <div class="card">
+        <h5 class="card-header text-white" style="background-color: rgb(29, 29, 71);">Histórico de Impressões
+          <a class="btn btn-primary" href="{{url_for('historico')}}" role="button">Resmas</a>
+        </h5>
+        <div class="card-body">
+            <br>
+            <table class="table">
+                <thead class="table-dark text-white" >
+                    <tr>
+                        <th scope="col" style="text-align: center;">Setor</th>
+                        <th scope="col" style="text-align: center;">Impressora</th>
+                        <th scope="col" style="text-align: center;">Impressões</th>
+                        <!-- <th scope="col" style="text-align: center;">Data da solicitação</th> -->
+                        <th scope="col" style="text-align: center;">Usuário</th>
+                        <th scope="col" style="text-align: center;">#</th>
+                      </tr>
+                </thead>
+                <tbody>
+                  {% for impres in impressoes %}
+                    <tr>
+                        <td style="text-align: center;">{{ impres.nome_setor }}</td>
+                        <td style="text-align: center;">{{ impres.nome_impressora }}</td>
+                        <td style="text-align: center;">{{ impres.quantidade_impressoes }}</td>
+                        <!-- <td style="text-align: center;">{{ impres.quantidade_resmas }}</td> -->
+                        <td style="text-align: center;">Usuário</td>
+                        <td style="text-align: center;">
+                          <button type="button" class="btn btn-outline-warning">editar</button>
+                          <button type="button" class="btn btn-outline-danger">apagar</button>
+                        </td>
+                      </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+        </div>
+      </div>
+</div>
