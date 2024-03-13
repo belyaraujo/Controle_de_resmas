@@ -1,7 +1,7 @@
 from fastapi import Depends, Request
 from fastapi.routing import APIRouter
 from fastapi import HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, validator
 from pytest import Session
 from typing import List
 
@@ -11,6 +11,7 @@ from configs.templates_config import TEMPLATES, MEDIA
 from models.solicitacoes_model import Solicitacoes
 from models.setores_model import Setores
 from models.impressoes_model import Impressoes
+
 
 
 router = APIRouter()
@@ -29,15 +30,19 @@ class SetoresRequest(BaseModel):
 class SolicitacoesResponse(BaseModel):
     id: int
     nome: str
-    matricula: str
-    quantidade_resmas: int
+    matricula: str 
+    quantidade_resmas: int 
     id_setor: int
 
+    class Config:
+        orm_mode = True
+
 class SolicitacoesRequest(BaseModel):
-    nome: str
-    matricula: str
-    quantidade_resmas: int
+    nome: str 
+    matricula: str 
+    quantidade_resmas: int = Field(gt=0)
     id_setor: int
+
 
 class ImpressoesResponse(BaseModel):
     id: int
@@ -82,21 +87,26 @@ def listar_solicitacao(request: Request, db: Session = Depends(get_db)):
 @router.post('/criar-solicitacao', response_model=SolicitacoesResponse, status_code=201)
 def criar_solicitacao(solicitacoes: SolicitacoesRequest, db: Session = Depends(get_db)) -> SolicitacoesResponse:
     # Verifica se o ID do setor fornecido existe na tabela setores
-    setor = db.query(Setores).filter(Setores.id == solicitacoes.id_setor).first()
-    if setor is None:
-        raise HTTPException(status_code=404, detail="ID do setor não encontrado")
-    
-    nova_solicitacao = Solicitacoes(
-        nome=solicitacoes.nome,
-        matricula=solicitacoes.matricula,
-        quantidade_resmas=solicitacoes.quantidade_resmas,
-        id_setor=solicitacoes.id_setor
-    )
-    db.add(nova_solicitacao)
-    db.commit()
-    db.refresh(nova_solicitacao)
+        setor = db.query(Setores).filter(Setores.id == solicitacoes.id_setor).first()
+        if setor is None:
+            raise HTTPException(status_code=404, detail="ID do setor não encontrado")
+        
+        nova_solicitacao = Solicitacoes(
+            nome=solicitacoes.nome,
+            matricula=solicitacoes.matricula,
+            quantidade_resmas=solicitacoes.quantidade_resmas,
+            id_setor=solicitacoes.id_setor
+        )
+        db.add(nova_solicitacao)
+        db.commit()
+        db.refresh(nova_solicitacao)
 
-    return nova_solicitacao
+        return nova_solicitacao
+
+        # return SolicitacoesResponse(
+        #     **nova_solicitacao.__dict__
+        # )
+
 
 @router.put('/editar-solicitacao/{id_solicitacao}', status_code=204)
 def editar_solicitacao(id_solicitacao: int, solicitacoes: SolicitacoesRequest, db: Session = Depends(get_db)) -> None:
@@ -119,7 +129,6 @@ def editar_solicitacao(id_solicitacao: int, solicitacoes: SolicitacoesRequest, d
 
 #     db.commit()
 
-from fastapi import HTTPException
 
 @router.delete('/deletar-solicitacao/{id_solicitacao}', status_code=204)
 def deletar_solicitacao(id_solicitacao: int, db: Session = Depends(get_db)):
@@ -180,11 +189,21 @@ def criar_impressoes(impressoes: ImpressoesRequest, db: Session = Depends(get_db
 
 # ----------------------      Rotas de Relatório     --------------------
 
-@router.get('/relatorio')
-def relatorio(request: Request, db: Session = Depends(get_db), name='relatorio'):
+@router.get('/relatorio', response_model=List[SetoresResponse], name='relatorio')
+def relatorio(request: Request, db: Session = Depends(get_db))-> List[SetoresResponse]:
     setores = db.query(Setores).all()
     context = {
         "request": request,
         "setores": setores
     }
     return TEMPLATES.TemplateResponse('relatorio.html', context=context)
+
+
+@router.get('/relatorio-impressoes', response_model=List[SetoresResponse], name='relatorio-impressoes')
+def relatorio(request: Request, db: Session = Depends(get_db))-> List[SetoresResponse]:
+    setores = db.query(Setores).all()
+    context = {
+        "request": request,
+        "setores": setores
+    }
+    return TEMPLATES.TemplateResponse('relatorio-impressoes.html', context=context)
