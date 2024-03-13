@@ -81,7 +81,7 @@ def listar_solicitacao(request: Request, db: Session = Depends(get_db)):
         "request": request,
         "solicitacoes": solicitacoes
     }
-    return TEMPLATES.TemplateResponse('historico.html', context=context)
+    return TEMPLATES.TemplateResponse('historico.html', context=context) 
 
 
 @router.post('/criar-solicitacao', response_model=SolicitacoesResponse, status_code=201)
