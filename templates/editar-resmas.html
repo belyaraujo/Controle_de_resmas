@@ -1,0 +1,71 @@
+{%include 'layouts/navigation.html'%}
+<br><br><br>
+<div class="container">
+    <div class="card">
+        <h5 class="card-header text-white" style="background-color: rgb(29, 29, 71);">Editar Solicitação de resmas</h5>
+        <div class="card-body">
+            <br>
+            <form method="POST" action="{{ url_for('editar_solicitacao', id_solicitacao=solicitacao.id) }}">
+                <div class="row mb-3">
+                    <div class="col-sm-5">
+                        <input class="form-control" type="text" placeholder="{{solicitacao.id}}" aria-label="default input example">
+                    </div>
+                </div>
+
+                <!------------------------------ Setores --------------------------------->
+
+                <div class="row mb-3">
+                    <label for="inputEmail3" class="col-sm-2 col-form-label">Setores</label>
+                    <div class="col-sm-5">
+                        <select class="form-select" aria-label="Default select example" name="id_setor">
+                            {% for setor in setores %}
+                                {% if setor == nome_setor %}
+                                    <option value="{{ setor.id }}" selected>{{ setor.nome }}</option>
+                                {% else %}
+                                    <option value="{{ setor.id }}">{{ setor.nome }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!------------------------------ Nome --------------------------------->
+
+                <div class="row mb-3">
+                    <label for="inputPassword3" class="col-sm-2 col-form-label">Nome</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" id="inputPassword3" value="{{ solicitacao.nome }}" name="nome">
+                    </div>
+                </div>
+
+                <!------------------------------ Matricula --------------------------------->
+
+                <div class="row mb-3">
+                    <label for="inputPassword3" class="col-sm-2 col-form-label">Matrícula</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" id="inputPassword3" value="{{ solicitacao.matricula }}" name="matricula">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="inputEmail3" class="col-sm-2 col-form-label">Quantidade de resmas</label>
+                    <div class="col-sm-5">
+                        <select class="form-select" aria-label="Default select example" name="quantidade_resmas">
+                            <option value="{{solicitacao.quantidade_resmas}}">{{solicitacao.quantidade_resmas}}</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Solicitar</button>
+            </form>
+        </div>
+    </div>
+</div>

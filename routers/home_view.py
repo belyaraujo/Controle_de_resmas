@@ -1,6 +1,5 @@
-from fastapi import Depends, Request
+from fastapi import Depends, Request, HTTPException, Form, Query
 from fastapi.routing import APIRouter
-from fastapi import HTTPException
 from pydantic import BaseModel
 from pytest import Session
 from typing import List
@@ -11,6 +10,9 @@ from configs.templates_config import TEMPLATES, MEDIA
 from models.solicitacoes_model import Solicitacoes
 from models.setores_model import Setores
 from models.impressoes_model import Impressoes
+
+from fastapi.responses import RedirectResponse
+
 
 
 router = APIRouter()
@@ -65,7 +67,7 @@ def solicitacao(request: Request, db: Session = Depends(get_db)) -> List[Setores
 
 # ----------------------      Rotas de Solicitações     --------------------
 
-@router.get('/historico', name='historico')
+@router.get('/', name='historico')
 def listar_solicitacao(request: Request, db: Session = Depends(get_db)):
     solicitacoes = db.query(Solicitacoes).all()
     for solicitacao in solicitacoes:
@@ -79,37 +81,98 @@ def listar_solicitacao(request: Request, db: Session = Depends(get_db)):
     return TEMPLATES.TemplateResponse('historico.html', context=context)
 
 
-@router.post('/criar-solicitacao', response_model=SolicitacoesResponse, status_code=201)
-def criar_solicitacao(solicitacoes: SolicitacoesRequest, db: Session = Depends(get_db)) -> SolicitacoesResponse:
-    # Verifica se o ID do setor fornecido existe na tabela setores
-    setor = db.query(Setores).filter(Setores.id == solicitacoes.id_setor).first()
+
+@router.post('/criar-solicitacao', response_model=SolicitacoesResponse, status_code=201, name='criar_solicitacao')
+def criar_solicitacao_form(
+    request: Request,
+    id_setor: int = Form(...), 
+    nome: str = Form(...), 
+    matricula: str = Form(...), 
+    quantidade_resmas: int = Form(...),
+    db: Session = Depends(get_db)
+):
+    # Crie a solicitação
+    setor = db.query(Setores).filter(Setores.id == id_setor).first()
     if setor is None:
         raise HTTPException(status_code=404, detail="ID do setor não encontrado")
     
     nova_solicitacao = Solicitacoes(
-        nome=solicitacoes.nome,
-        matricula=solicitacoes.matricula,
-        quantidade_resmas=solicitacoes.quantidade_resmas,
-        id_setor=solicitacoes.id_setor
+        nome=nome,
+        matricula=matricula,
+        quantidade_resmas=quantidade_resmas,
+        id_setor=id_setor
     )
     db.add(nova_solicitacao)
     db.commit()
-    db.refresh(nova_solicitacao)
 
+    # Redirecionar para a rota de histórico após a criação da solicitação
+    # return RedirectResponse(url=router.url_path_for('historico'))
     return nova_solicitacao
 
-@router.put('/editar-solicitacao/{id_solicitacao}', status_code=204)
-def editar_solicitacao(id_solicitacao: int, solicitacoes: SolicitacoesRequest, db: Session = Depends(get_db)) -> None:
-    solicitacao:Solicitacoes = db.query(Solicitacoes).get(id_solicitacao)
-    solicitacao.nome = solicitacoes.nome
-    solicitacao.matricula = solicitacoes.matricula
-    solicitacao.quantidade_resmas = solicitacoes.quantidade_resmas
-    solicitacao.id_setor = solicitacoes.id_setor
 
-    db.add(solicitacao)
+# essa é a rota que funciona
+@router.get('/editar-resmas/{id_solicitacao}', response_model=List[SetoresResponse], name='editar_resmas')
+def editar_resmas(request: Request, id_solicitacao: int, db: Session = Depends(get_db)) -> List[SetoresResponse]:
+    solicitacao = db.query(Solicitacoes).filter(Solicitacoes.id == id_solicitacao).first()
+    setores = db.query(Setores).all()
+    nome_setor = db.query(Setores).filter(Setores.id == solicitacao.id_setor).first()
+    context = {
+        "request": request,
+        "setores": setores,
+        "solicitacao": solicitacao,
+        "nome_setor": nome_setor
+    }
+    return TEMPLATES.TemplateResponse('editar-resmas.html', context=context)
+
+
+
+# @router.put('/editar-solicitacao/{id_solicitacao}', status_code=204, name='editar_solicitacao')
+# def editar_solicitacao(
+#     id_solicitacao: int, 
+#     solicitacoes: SolicitacoesRequest, 
+#     db: Session = Depends(get_db)) -> None:
+    
+#     solicitacao:Solicitacoes = db.query(Solicitacoes).get(id_solicitacao)
+#     solicitacao.nome = solicitacoes.nome
+#     solicitacao.matricula = solicitacoes.matricula
+#     solicitacao.quantidade_resmas = solicitacoes.quantidade_resmas
+#     solicitacao.id_setor = solicitacoes.id_setor
+
+#     db.add(solicitacao)
+#     db.commit()
+#     db.refresh(solicitacao)
+#     return solicitacao
+
+
+@router.post('/editar-solicitacao/{id_solicitacao}', status_code=204, name='editar_solicitacao')
+def editar_solicitacao(
+    id_solicitacao: int,
+    nome: str = Form(...),
+    matricula: str = Form(...),
+    quantidade_resmas: int = Form(...),
+    id_setor: int = Form(...),
+    db: Session = Depends(get_db)
+):
+    # Verificar se a solicitação existe
+    solicitacao = db.query(Solicitacoes).filter(Solicitacoes.id == id_solicitacao).first()
+    if not solicitacao:
+        raise HTTPException(status_code=404, detail="Solicitação não encontrada")
+
+    # Atualizar os dados da solicitação
+    solicitacao.nome = nome
+    solicitacao.matricula = matricula
+    solicitacao.quantidade_resmas = quantidade_resmas
+    solicitacao.id_setor = id_setor
+
     db.commit()
     db.refresh(solicitacao)
+
     return solicitacao
+
+    # return TEMPLATES.TemplateResponse('historico.html')
+
+
+
 
 # @router.delete('/deletar-solicitacao/{id_solicitacao}', response_model=SolicitacoesResponse, status_code=200)
 # def deletar_solicitacao(id_solicitacao: int, db: Session = Depends(get_db)) -> SolicitacoesResponse:
@@ -119,7 +182,6 @@ def editar_solicitacao(id_solicitacao: int, solicitacoes: SolicitacoesRequest, d
 
 #     db.commit()
 
-from fastapi import HTTPException
 
 @router.delete('/deletar-solicitacao/{id_solicitacao}', status_code=204)
 def deletar_solicitacao(id_solicitacao: int, db: Session = Depends(get_db)):
@@ -160,17 +222,14 @@ def listar_impressoes(request: Request, db: Session = Depends(get_db)):
 
 
 
-@router.post('/criar-impressoes', response_model=ImpressoesResponse, status_code=201)
-def criar_impressoes(impressoes: ImpressoesRequest, db: Session = Depends(get_db)) -> ImpressoesResponse:
+@router.post('/criar-impressoes', response_model=ImpressoesResponse, status_code=201, name='criar_impressoes')
+def criar_impressoes(request: Request, id_setor: int = Form(...), quantidade_impressoes: int = Form(...), db: Session = Depends(get_db)):
     # Verifica se o ID do setor fornecido existe na tabela setores
-    setor = db.query(Setores).filter(Setores.id == impressoes.id_setor).first()
+    setor = db.query(Setores).filter(Setores.id == id_setor).first()
     if setor is None:
         raise HTTPException(status_code=404, detail="ID do setor não encontrado")
     
-    nova_impressao = Impressoes(
-        quantidade_impressoes=impressoes.quantidade_impressoes,
-        id_setor=impressoes.id_setor
-    )
+    nova_impressao = Impressoes(quantidade_impressoes=quantidade_impressoes, id_setor=id_setor)
     db.add(nova_impressao)
     db.commit()
     db.refresh(nova_impressao)

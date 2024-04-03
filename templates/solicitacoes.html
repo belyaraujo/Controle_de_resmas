@@ -1,18 +1,18 @@
-{%include 'layouts/navigation.html'%}
+{% include 'layouts/navigation.html' %}
 <br><br><br>
 <div class="container">
   <div class="card">
     <h5 class="card-header text-white" style="background-color: rgb(29, 29, 71);">Solicitação de resmas
-      <a class="btn btn-primary" href="{{url_for('impressoes')}}" role="button">Impressões</a>
+      <a class="btn btn-primary" href="{{ url_for('impressoes') }}" role="button">Impressões</a>
     </h5>
     
     <div class="card-body">
       <br>
-      <form>
+      <form method="POST" action="{{ url_for('criar_solicitacao') }}">
         <div class="row mb-3">
-          <label for="inputEmail3" class="col-sm-2 col-form-label">Setores</label>
+          <label for="inputSetor" class="col-sm-2 col-form-label">Setores</label>
           <div class="col-sm-5">
-            <select class="form-select" aria-label="Default select example">
+            <select class="form-select" aria-label="Selecione um setor" name="id_setor" id="inputSetor">
               <option selected>Selecione um setor</option>
               {% for setor in setores %}
               <option value="{{ setor.id }}">{{ setor.nome }}</option>
@@ -21,32 +21,24 @@
           </div>
         </div>
         <div class="row mb-3">
-          <label for="inputPassword3" class="col-sm-2 col-form-label">Nome</label>
+          <label for="inputNome" class="col-sm-2 col-form-label">Nome</label>
           <div class="col-sm-5">
-            <input type="text" class="form-control" id="inputPassword3">
+            <input type="text" class="form-control" id="inputNome" name="nome">
           </div>
         </div>
         <div class="row mb-3">
-          <label for="inputPassword3" class="col-sm-2 col-form-label">Matrícula</label>
+          <label for="inputMatricula" class="col-sm-2 col-form-label">Matrícula</label>
           <div class="col-sm-5">
-            <input type="text" class="form-control" id="inputPassword3">
+            <input type="text" class="form-control" id="inputMatricula" name="matricula">
           </div>
         </div>
         <div class="row mb-3">
-          <label for="inputEmail3" class="col-sm-2 col-form-label">Quantidade de resmas</label>
+          <label for="inputQuantidade" class="col-sm-2 col-form-label">Quantidade de resmas</label>
           <div class="col-sm-5">
-            <select class="form-select" aria-label="Default select example">
-              <option>Selecione a quantidade</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
+            <select class="form-select" aria-label="Selecione a quantidade" name="quantidade_resmas" id="inputQuantidade">
+              {% for i in range(1, 11) %}
+              <option value="{{ i }}">{{ i }}</option>
+              {% endfor %}
             </select>
           </div>
         </div>
