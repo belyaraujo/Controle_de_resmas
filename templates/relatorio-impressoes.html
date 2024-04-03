@@ -2,13 +2,9 @@
 <br><br><br>
 <div class="container">
     <div class="card">
-<<<<<<< HEAD
-        <h5 class="card-header text-white" style="background-color: rgb(29, 29, 71);">Relatório</h5>
-=======
-        <h5 class="card-header text-white" style="background-color: rgb(29, 29, 71);">Relatório de resmas
-            <a class="btn btn-primary" href="{{url_for('relatorio-impressoes')}}" role="button">Impressões</a>
+        <h5 class="card-header text-white" style="background-color: rgb(29, 29, 71);">Relatório de impressões
+            <a class="btn btn-primary" href="{{url_for('relatorio')}}" role="button">Resmas</a>
         </h5>
->>>>>>> 78ce3254980b21b6a1099cdd76571d6abfdf6217
         <div class="card-body">
             <br>
             <form>
@@ -39,28 +35,6 @@
                     <label for="inputEmail3" class="col-sm-2 col-form-label">Documento</label>
                     <div class="col-sm-5">
                         <select class="form-select" aria-label="Default select example">
-<<<<<<< HEAD
-                            <option selected>Selecione um tipo de documento</option>
-                            <option value="1">PDF</option>
-                            <option value="2">CSV</option>
-                            <option value="3">XLSX</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label">Relatório de</label>
-                    <div class="col-sm-5">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="relatorio" id="inlineRadio1" value="option1">
-                            <label class="form-check-label" for="inlineRadio1">Resmas</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="relatorio" id="inlineRadio2" value="option2">
-                            <label class="form-check-label" for="inlineRadio2">Impressões</label>
-                        </div>
-                    </div>
-                </div>
-=======
                             <option selected>Selecione um documento</option>
                             <option value="1">PDF</option>
                             <option value="2">CSV</option>
@@ -68,7 +42,6 @@
                         </select>
                     </div>
                 </div>
->>>>>>> 78ce3254980b21b6a1099cdd76571d6abfdf6217
                 <button type="submit" class="btn btn-primary">Gerar Relatório</button>
             </form>
         </div>
