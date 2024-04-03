@@ -8,21 +8,12 @@
 
     <div class="card-body">
       <br>
-<<<<<<< HEAD
       <form method="POST" action="{{ url_for('criar_solicitacao') }}">
         <div class="row mb-3">
           <label for="inputSetor" class="col-sm-2 col-form-label">Setores</label>
           <div class="col-sm-5">
             <select class="form-select" aria-label="Selecione um setor" name="id_setor" id="inputSetor">
               <option selected>Selecione um setor</option>
-=======
-      <form action="{{url_for('criar_solicitacao')}}" method="post">
-        <div class="row mb-3">
-          <label for="setor" class="col-sm-2 col-form-label">Setores</label>
-          <div class="col-sm-5">
-            <select class="form-select" id="setor" name="id_setor" aria-label="Default select example">
-              <option selected disabled>Selecione um setor</option>
->>>>>>> 78ce3254980b21b6a1099cdd76571d6abfdf6217
               {% for setor in setores %}
               <option value="{{ setor.id }}">{{ setor.nome }}</option>
               {% endfor %}
@@ -30,7 +21,6 @@
           </div>
         </div>
         <div class="row mb-3">
-<<<<<<< HEAD
           <label for="inputNome" class="col-sm-2 col-form-label">Nome</label>
           <div class="col-sm-5">
             <input type="text" class="form-control" id="inputNome" name="nome">
@@ -49,34 +39,6 @@
               {% for i in range(1, 11) %}
               <option value="{{ i }}">{{ i }}</option>
               {% endfor %}
-=======
-          <label for="nome" class="col-sm-2 col-form-label">Nome</label>
-          <div class="col-sm-5">
-            <input type="text" class="form-control" id="nome" name="nome">
-          </div>
-        </div>
-        <div class="row mb-3">
-          <label for="matricula" class="col-sm-2 col-form-label">Matrícula</label>
-          <div class="col-sm-5">
-            <input type="text" class="form-control" id="matricula" name="matricula">
-          </div>
-        </div>
-        <div class="row mb-3">
-          <label for="quantidade" class="col-sm-2 col-form-label">Quantidade de resmas</label>
-          <div class="col-sm-5">
-            <select class="form-select" id="quantidade" name="quantidade_resmas" aria-label="Default select example">
-              <option selected disabled>Selecione a quantidade</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
->>>>>>> 78ce3254980b21b6a1099cdd76571d6abfdf6217
             </select>
           </div>
         </div>
