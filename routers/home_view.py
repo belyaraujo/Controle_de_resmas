@@ -183,9 +183,9 @@ def editar_solicitacao(
 #     db.commit()
 
 
-@router.delete('/deletar-solicitacao/{id_solicitacao}', status_code=204)
+@router.delete('/deletar-solicitacao/{id_solicitacao}', status_code=204, name='deletar_solicitacao')
 def deletar_solicitacao(id_solicitacao: int, db: Session = Depends(get_db)):
-    solicitacao = db.query(Solicitacoes).get(id_solicitacao)
+    solicitacao = db.query(Solicitacoes).filter(Solicitacoes.id == id_solicitacao).first()
     
     if solicitacao is None:
         raise HTTPException(status_code=404, detail="Solicitação não encontrada")
