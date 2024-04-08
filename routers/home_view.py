@@ -191,7 +191,7 @@ def deletar_solicitacao(id_solicitacao: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Solicitação não encontrada")
     
     db.delete(solicitacao)
-    db.commit()
+    db.commit() 
 
 
 # ----------------------      Rotas de Impressões     --------------------
